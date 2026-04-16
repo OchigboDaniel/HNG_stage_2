@@ -1,14 +1,15 @@
 package com.classifyName.nameClassifier;
 
 
+import com.classifyName.nameClassifier.model.DataEntity;
 import lombok.Data;
 
 @Data
 public class GenderResponseDTO {
     private String status;
-    private DataResponseDTO data;
+    private DataEntity data;
 
-    public GenderResponseDTO(String status, DataResponseDTO data) {
+    public GenderResponseDTO(String status, DataEntity data) {
         this.status = status;
         this.data = data;
     }

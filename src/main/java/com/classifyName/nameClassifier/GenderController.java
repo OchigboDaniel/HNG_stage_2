@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.swing.plaf.synth.Region;
 import java.util.UUID;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/profile")
 @Validated

@@ -10,6 +10,6 @@ import java.util.UUID;
 
 @Repository
 public interface IDataRepository extends JpaRepository<DataEntity, UUID> {
-    Optional<DataEntity> findByNameIgnoreCase(String name);
+    Optional<DataEntity> findByName(String name);
 
 }

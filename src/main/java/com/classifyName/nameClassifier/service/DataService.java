@@ -44,7 +44,7 @@ public class DataService{
         String name = data.getName();
 
         //Check if the name is in the DB
-        Optional<DataEntity> existing = dataRepository.findByNameIgnoreCase(name);
+        Optional<DataEntity> existing = dataRepository.findByName(name);
         if (existing.isPresent()) {
             return ResponseEntity.status(200)
                     .body(new ExistingResponseDTO(

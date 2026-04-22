@@ -48,7 +48,8 @@ public class GenderController {
             if (limit > 50){
                 limit = 50;
             }
-        return genderService.getAllProfile(gender, age_group, country_id, min_age, max_age,min_gender_probability, min_country_probability);
+            int page = pageable.getPageNumber();
+        return genderService.getAllProfile(gender, age_group, country_id, min_age, max_age,min_gender_probability, min_country_probability, page, limit );
     }
 
     @DeleteMapping("/{id}")

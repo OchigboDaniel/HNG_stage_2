@@ -8,9 +8,10 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class AllProfileResponse {
+public class PaginatedResponse<T> {
     private String status;
-    private int count;
-    private List<DataEntity> profileList;
-
+    private int page;
+    private int limit;
+    private int total;
+    private List<DataEntity> data;
 }

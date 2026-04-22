@@ -3,10 +3,8 @@ package com.classifyName.nameClassifier.service;
 import com.classifyName.nameClassifier.*;
 import com.classifyName.nameClassifier.model.DataEntity;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
@@ -165,7 +163,7 @@ public class DataService{
         return ResponseEntity.notFound().build();
     }
 
-    public ResponseEntity<?> getAllProfile(String gender, String age_group, String country_id, Integer min_age, Integer max_age, Double min_gender_probability, Double min_country_probability){
+    public ResponseEntity<?> getAllProfile(String gender, String age_group, String country_id, Integer min_age, Integer max_age, Double min_gender_probability, Double min_country_probability, int page, int limit ){
         List<DataEntity> profiles = dataRepository.findAll();
 
         List<DataEntity> filtered = profiles.stream()
@@ -183,8 +181,10 @@ public class DataService{
 
         if (profiles != null && !profiles.isEmpty()){
             return ResponseEntity.status(200)
-                    .body( new AllProfileResponse(
+                    .body( new PaginatedResponse(
                             "success",
+                            page,
+                            limit,
                             count,
                             filtered
                             )

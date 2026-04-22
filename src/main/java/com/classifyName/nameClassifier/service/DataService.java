@@ -165,13 +165,18 @@ public class DataService{
         return ResponseEntity.notFound().build();
     }
 
-    public ResponseEntity<?> getAllProfile(String gender, String country_id, String age_group){
+    public ResponseEntity<?> getAllProfile(String gender, String age_group, String country_id, Integer min_age, Integer max_age, Double min_gender_probability, Double min_country_probability){
         List<DataEntity> profiles = dataRepository.findAll();
 
         List<DataEntity> filtered = profiles.stream()
                 .filter(p -> gender == null || p.getGender().equalsIgnoreCase(gender))
                 .filter(p -> country_id == null || p.getCountryId().equalsIgnoreCase(country_id))
                 .filter(p -> age_group == null || p.getAgeGroup().equalsIgnoreCase(age_group))
+                .filter((p -> country_id == null || p.getCountryId().equalsIgnoreCase(country_id)))
+                .filter(p -> min_age == null || p.getAge() >  min_age)
+                .filter(p -> max_age == null || p.getAge() < max_age)
+                .filter(p -> min_gender_probability == null || p.getGenderProbability() > min_gender_probability)
+                .filter(p -> min_country_probability == null || p.getCountryProbability() > min_gender_probability)
                 .toList();
 
         int count = filtered.size();

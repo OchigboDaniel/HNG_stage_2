@@ -4,6 +4,9 @@ import com.classifyName.nameClassifier.service.DataService;
 import jakarta.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,9 +37,18 @@ public class GenderController {
     public ResponseEntity<?> getAllProfile(
             @RequestParam(required = false) String gender,
             @RequestParam(required = false) String country_id,
-            @RequestParam(required = false) String age_group)
-    {
-        return genderService.getAllProfile(gender, country_id, age_group);
+            @RequestParam(required = false) String age_group,
+            @RequestParam(required = false) Integer min_age,
+            @RequestParam(required = false) Integer max_age,
+            @RequestParam(required = false) Double min_country_probability,
+            @RequestParam(required = false) Double min_gender_probability,
+            @PageableDefault(page = 0, direction = Sort.Direction.ASC) Pageable pageable,
+            @RequestParam(defaultValue = "10") int limit) {
+
+            if (limit > 50){
+                limit = 50;
+            }
+        return genderService.getAllProfile(gender, age_group, country_id, min_age, max_age,min_gender_probability, min_country_probability);
     }
 
     @DeleteMapping("/{id}")

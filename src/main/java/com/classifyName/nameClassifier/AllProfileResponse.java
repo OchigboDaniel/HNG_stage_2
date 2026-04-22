@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.util.List;
 
+@Data
 @AllArgsConstructor
 public class AllProfileResponse {
     private String status;

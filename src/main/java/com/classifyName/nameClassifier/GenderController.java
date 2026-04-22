@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/profile")
+@RequestMapping("/api/profiles")
 @Validated
 public class GenderController {
 

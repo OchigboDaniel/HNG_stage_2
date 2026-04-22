@@ -136,20 +136,20 @@ public class DataService{
                     .body(new ErrorResponse("error", String.format("%s returned an invalid response", edgeCaseAvailable.getApiURL())));
         };
         
-        DataEntity dataDTO = new DataEntity();
-        dataDTO.setName(name);
-        dataDTO.setGender(gender);
-        dataDTO.setAge(age);
-        dataDTO.setAge_group(age_grade);
-        dataDTO.setSample_size(samplesNum);
-        dataDTO.setGender_probability(gender_probability);
-        dataDTO.setCountry_id(country_id);
-        dataDTO.setCountry_probability(country_probability);
-        dataRepository.save(dataDTO);
+        DataEntity dataEntity = new DataEntity();
+        dataEntity.setName(name);
+        dataEntity.setGender(gender);
+        dataEntity.setAge(age);
+        dataEntity.setAgeGroup(age);
+        dataEntity.setSampleSize(samplesNum);
+        dataEntity.setGenderProbability(gender_probability);
+        dataEntity.setCountryId(country_id);
+        dataEntity.setCountryProbability(country_probability);
+        dataRepository.save(dataEntity);
 
 
         return ResponseEntity.status(201)
-                .body(new GenderResponseDTO("success", dataDTO));
+                .body(new GenderResponseDTO("success", dataEntity));
 
     }
 
@@ -170,8 +170,8 @@ public class DataService{
 
         List<DataEntity> filtered = profiles.stream()
                 .filter(p -> gender == null || p.getGender().equalsIgnoreCase(gender))
-                .filter(p -> country_id == null || p.getCountry_id().equalsIgnoreCase(country_id))
-                .filter(p -> age_group == null || p.getAge_group().equalsIgnoreCase(age_group))
+                .filter(p -> country_id == null || p.getCountryId().equalsIgnoreCase(country_id))
+                .filter(p -> age_group == null || p.getAgeGroup().equalsIgnoreCase(age_group))
                 .toList();
 
         int count = filtered.size();

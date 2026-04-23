@@ -1,8 +1,7 @@
-package com.classifyName.nameClassifier;
+package com.classifyName.nameClassifier.controller;
 
-import com.classifyName.nameClassifier.model.DataEntity;
+import com.classifyName.nameClassifier.dto.RequestDTO;
 import com.classifyName.nameClassifier.service.DataService;
-import jakarta.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -12,15 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.plaf.synth.Region;
-import java.util.List;
 import java.util.UUID;
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/profiles")
 @Validated
-public class GenderController {
+public class ProfileController {
 
     @Autowired
     DataService genderService;

@@ -1,6 +1,10 @@
 package com.classifyName.nameClassifier.service;
 
 import com.classifyName.nameClassifier.*;
+import com.classifyName.nameClassifier.controller.ExistingResponseDTO;
+import com.classifyName.nameClassifier.dto.PaginatedResponse;
+import com.classifyName.nameClassifier.dto.ProfileResponseDTO;
+import com.classifyName.nameClassifier.dto.RequestDTO;
 import com.classifyName.nameClassifier.model.DataEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -9,10 +13,6 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static java.text.Normalizer.normalize;
 
 
 @Service
@@ -153,7 +153,7 @@ public class DataService{
 
 
         return ResponseEntity.status(201)
-                .body(new GenderResponseDTO("success", dataEntity));
+                .body(new ProfileResponseDTO("success", dataEntity));
 
     }
 
@@ -161,7 +161,7 @@ public class DataService{
         Optional<DataEntity> existing = dataRepository.findById(id);
         if (existing.isPresent()) {
             return ResponseEntity.status(200)
-                    .body(new GenderResponseDTO(
+                    .body(new ProfileResponseDTO(
                             "success",
                             existing.get()
                     ));

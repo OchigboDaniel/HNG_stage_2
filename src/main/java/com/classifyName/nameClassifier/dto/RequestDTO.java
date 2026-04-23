@@ -1,4 +1,4 @@
-package com.classifyName.nameClassifier;
+package com.classifyName.nameClassifier.dto;
 
 
 import jakarta.validation.constraints.NotBlank;

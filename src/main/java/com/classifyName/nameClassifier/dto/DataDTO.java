@@ -1,11 +1,9 @@
-package com.classifyName.nameClassifier;
+package com.classifyName.nameClassifier.dto;
 
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import java.time.Instant;
-import java.util.UUID;
-
 
 
 @Data

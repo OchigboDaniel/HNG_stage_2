@@ -1,4 +1,4 @@
-package com.classifyName.nameClassifier;
+package com.classifyName.nameClassifier.controller;
 
 
 import com.classifyName.nameClassifier.model.DataEntity;

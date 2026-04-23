@@ -1,6 +1,6 @@
 package com.classifyName.nameClassifier.service;
 
-import com.classifyName.nameClassifier.RequestDTO;
+import com.classifyName.nameClassifier.dto.RequestDTO;
 import org.springframework.http.ResponseEntity;
 
 public interface IDataService {

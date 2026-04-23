@@ -9,6 +9,10 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.text.Normalizer.normalize;
 
 
 @Service
@@ -16,11 +20,13 @@ public class DataService{
 
     private final RestTemplate restTemplate;
     private final IDataRepository dataRepository;
+    private final QueryParser queryParser;
 
-    public DataService(RestTemplate restTemplate, IDataRepository dataRepository) {
+    public DataService(RestTemplate restTemplate, IDataRepository dataRepository, QueryParser queryParser) {
 
         this.restTemplate =restTemplate;
         this.dataRepository = dataRepository;
+        this.queryParser = queryParser;
     }
 
 
@@ -191,6 +197,42 @@ public class DataService{
                     );
         }
         return ResponseEntity.notFound().build();
+    }
+
+
+    public ResponseEntity searchProfile(String keyword, int page, int limit) {
+
+        if (keyword == null || keyword.isBlank()) {
+            return ResponseEntity.badRequest()
+                    .body("Query cannot be empty");
+        }
+
+        // 1. Convert text → structured filters
+        SearchFilter filter = queryParser.parse(keyword);
+
+        // 2. Run DB query
+        List<DataEntity> results =
+                dataRepository.searchProfile(
+                        filter.getGenders(),
+                        filter.getAgeGroup(),
+                        filter.getCountryId(),
+                        filter.getMinAge(),
+                        filter.getMaxAge()
+                );
+
+        int total = results.size();
+
+        // 3. Return response
+        return ResponseEntity.ok()
+                .body(
+                        new PaginatedResponse<>(
+                                "success",
+                                page,
+                                limit,
+                                total,
+                                results
+                        )
+                );
     }
 
     public ResponseEntity deleteById(UUID id){

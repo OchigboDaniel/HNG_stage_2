@@ -1,5 +1,6 @@
 package com.classifyName.nameClassifier;
 
+import com.classifyName.nameClassifier.model.DataEntity;
 import com.classifyName.nameClassifier.service.DataService;
 import jakarta.validation.constraints.NotBlank;
 
@@ -12,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.plaf.synth.Region;
+import java.util.List;
 import java.util.UUID;
 
 @CrossOrigin(origins = "*")
@@ -50,6 +52,18 @@ public class GenderController {
             }
             int page = pageable.getPageNumber();
         return genderService.getAllProfile(gender, age_group, country_id, min_age, max_age,min_gender_probability, min_country_probability, page, limit );
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity searchProfile(
+            @RequestParam(name = "q") String keywords,
+            @PageableDefault(page = 0, direction = Sort.Direction.ASC) Pageable pageable,
+            @RequestParam(defaultValue = "10") int limit){
+        if (limit > 50){
+            limit = 50;
+        }
+        int page = pageable.getPageNumber();
+        return genderService.searchProfile(keywords, page, limit);
     }
 
     @DeleteMapping("/{id}")

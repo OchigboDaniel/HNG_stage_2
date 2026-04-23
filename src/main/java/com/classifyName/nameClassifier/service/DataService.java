@@ -30,13 +30,6 @@ public class DataService{
     }
 
 
-    // Get Values for the ENV file
-    @Value("${GENDERIZE_BASE_URL}")
-    private String genderizeBaseURL;
-    @Value("${AGIFY_BASE_URL}")
-    private String agifyBaseURL;
-    @Value("${NATIONALIZE_BASE_URL}")
-    private String nationalizeBaseURL;
 
     //Format the Gender ApI request String URL
     public String formatAPI_URLQuery( String baseURL, String name){
@@ -61,9 +54,9 @@ public class DataService{
 
 
         // Format All URl for the name query
-        String genderizeUrl = formatAPI_URLQuery(genderizeBaseURL,name);
-        String agifyUrl = formatAPI_URLQuery(agifyBaseURL, name);
-        String nationalizeURL = formatAPI_URLQuery(nationalizeBaseURL, name);
+        String genderizeUrl = formatAPI_URLQuery("https://api.genderize.io",name);
+        String agifyUrl = formatAPI_URLQuery("https://api.agify.io", name);
+        String nationalizeURL = formatAPI_URLQuery("https://api.nationalize.io", name);
 
         //Response Mapper
         Map<String, Object> genderizeResponse;
@@ -105,7 +98,7 @@ public class DataService{
         // Update edge case availability
         if (gender == null || count == 0){
             edgeCaseAvailable.setEdgeCase(true);
-            edgeCaseAvailable.setApiURL(genderizeBaseURL);
+            edgeCaseAvailable.setApiURL("https://api.genderize.io");
         }
 
         //Agipy
@@ -114,7 +107,7 @@ public class DataService{
         // Update edge case availability Agify: 0–12 → child, 13–19 → teenager, 20–59 → adult, 60+ → senior
         if (age == null){
             edgeCaseAvailable.setEdgeCase(true);
-            edgeCaseAvailable.setApiURL(agifyBaseURL);
+            edgeCaseAvailable.setApiURL("https://api.agify.io");
         } else if (age >= 0 && age <= 12) {
             age_grade = "child";
         } else if (age >= 13 && age <= 19) {

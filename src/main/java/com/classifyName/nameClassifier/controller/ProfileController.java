@@ -50,13 +50,13 @@ public class ProfileController {
             @RequestParam(defaultValue = "1") String pageStr,
             @RequestParam(defaultValue = "10") String limitStr) {
 
-        // ✅ clean sort mapping
+        // sort mapping
         sortBy = switch (sortBy) {
             case "created_at" -> "createdAt";
             case "age" -> "age";
             case "country_probability" -> "countryProbability";
             case "gender_probability" -> "genderProbability";
-            default -> null;
+            default -> "createdAt";
         };
 
         if (sortBy == null) {

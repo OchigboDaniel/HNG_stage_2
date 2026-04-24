@@ -7,6 +7,9 @@ import com.classifyName.nameClassifier.dto.ProfileResponseDTO;
 import com.classifyName.nameClassifier.dto.RequestDTO;
 import com.classifyName.nameClassifier.model.DataEntity;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
@@ -16,7 +19,7 @@ import java.util.*;
 
 
 @Service
-public class DataService{
+public class DataService {
 
     private final RestTemplate restTemplate;
     private final IDataRepository dataRepository;
@@ -24,20 +27,19 @@ public class DataService{
 
     public DataService(RestTemplate restTemplate, IDataRepository dataRepository, QueryParser queryParser) {
 
-        this.restTemplate =restTemplate;
+        this.restTemplate = restTemplate;
         this.dataRepository = dataRepository;
         this.queryParser = queryParser;
     }
 
 
-
     //Format the Gender ApI request String URL
-    public String formatAPI_URLQuery( String baseURL, String name){
+    public String formatAPI_URLQuery(String baseURL, String name) {
 
         return baseURL + "?name=" + name;
     }
 
-    public ResponseEntity<?> createProfile(RequestDTO data){
+    public ResponseEntity<?> createProfile(RequestDTO data) {
         String name = data.getName();
 
         //Check if the name is in the DB
@@ -52,9 +54,8 @@ public class DataService{
         }
 
 
-
         // Format All URl for the name query
-        String genderizeUrl = formatAPI_URLQuery("https://api.genderize.io",name);
+        String genderizeUrl = formatAPI_URLQuery("https://api.genderize.io", name);
         String agifyUrl = formatAPI_URLQuery("https://api.agify.io", name);
         String nationalizeURL = formatAPI_URLQuery("https://api.nationalize.io", name);
 
@@ -81,7 +82,7 @@ public class DataService{
             );
 
         } catch (ResourceAccessException ex) {
-            return  ResponseEntity.status(502).body(new ErrorResponse("error", "Upstream or server failure"));
+            return ResponseEntity.status(502).body(new ErrorResponse("error", "Upstream or server failure"));
         }
 
         //
@@ -96,16 +97,16 @@ public class DataService{
                 ? ((Number) genderizeResponse.get("probability")).doubleValue()
                 : 0.0;
         // Update edge case availability
-        if (gender == null || count == 0){
+        if (gender == null || count == 0) {
             edgeCaseAvailable.setEdgeCase(true);
             edgeCaseAvailable.setApiURL("https://api.genderize.io");
         }
 
         //Agipy
-        Integer age =(Integer) agifyResponse.get("age");
+        Integer age = (Integer) agifyResponse.get("age");
         String age_grade = "";
         // Update edge case availability Agify: 0–12 → child, 13–19 → teenager, 20–59 → adult, 60+ → senior
-        if (age == null){
+        if (age == null) {
             edgeCaseAvailable.setEdgeCase(true);
             edgeCaseAvailable.setApiURL("https://api.agify.io");
         } else if (age >= 0 && age <= 12) {
@@ -114,7 +115,7 @@ public class DataService{
             age_grade = "teenager";
         } else if (age >= 20 && age <= 59) {
             age_grade = "adult";
-        }else {
+        } else {
             age_grade = "senior";
         }
 
@@ -125,14 +126,16 @@ public class DataService{
         String country_id = (String) country.get("country_id");
         Double country_probability = country.get("probability") != null
                 ? ((Number) country.get("probability")).doubleValue()
-                : 0.0;;
+                : 0.0;
+        ;
 
         //Check if there are any edge case
-        if (edgeCaseAvailable.isEdgeCase() == true){
+        if (edgeCaseAvailable.isEdgeCase() == true) {
             return ResponseEntity.status(502)
                     .body(new ErrorResponse("error", String.format("%s returned an invalid response", edgeCaseAvailable.getApiURL())));
-        };
-        
+        }
+        ;
+
         DataEntity dataEntity = new DataEntity();
         dataEntity.setName(name);
         dataEntity.setGender(gender);
@@ -150,7 +153,7 @@ public class DataService{
 
     }
 
-    public ResponseEntity<?> getProfileByID(UUID id){
+    public ResponseEntity<?> getProfileByID(UUID id) {
         Optional<DataEntity> existing = dataRepository.findById(id);
         if (existing.isPresent()) {
             return ResponseEntity.status(200)
@@ -162,34 +165,75 @@ public class DataService{
         return ResponseEntity.notFound().build();
     }
 
-    public ResponseEntity<?> getAllProfile(String gender, String age_group, String country_id, Integer min_age, Integer max_age, Double min_gender_probability, Double min_country_probability, int page, int limit ){
+    public ResponseEntity<?> getAllProfile(
+            String gender,
+            String age_group,
+            String country_id,
+            Integer min_age,
+            Integer max_age,
+            Double min_gender_probability,
+            Double min_country_probability,
+            Pageable pageable) {
+
         List<DataEntity> profiles = dataRepository.findAll();
 
+        //FILTER (ONLY check input, not entity fields)
         List<DataEntity> filtered = profiles.stream()
                 .filter(p -> gender == null || p.getGender().equalsIgnoreCase(gender))
                 .filter(p -> country_id == null || p.getCountryId().equalsIgnoreCase(country_id))
                 .filter(p -> age_group == null || p.getAgeGroup().equalsIgnoreCase(age_group))
-                .filter((p -> country_id == null || p.getCountryId().equalsIgnoreCase(country_id)))
-                .filter(p -> min_age == null || p.getAge() >  min_age)
-                .filter(p -> max_age == null || p.getAge() < max_age)
-                .filter(p -> min_gender_probability == null || p.getGenderProbability() > min_gender_probability)
-                .filter(p -> min_country_probability == null || p.getCountryProbability() > min_gender_probability)
+                .filter(p -> min_age == null || p.getAge() >= min_age)
+                .filter(p -> max_age == null || p.getAge() <= max_age)
+                .filter(p -> min_gender_probability == null || p.getGenderProbability() >= min_gender_probability)
+                .filter(p -> min_country_probability == null || p.getCountryProbability() >= min_country_probability)
                 .toList();
 
-        int count = filtered.size();
+        //SORT
+        Sort sort = pageable.getSort();
+        Comparator<DataEntity> comparator = null;
 
-        if (profiles != null && !profiles.isEmpty()){
-            return ResponseEntity.status(200)
-                    .body( new PaginatedResponse(
-                            "success",
-                            page,
-                            limit,
-                            count,
-                            filtered
-                            )
-                    );
+        for (Sort.Order order : sort) {
+            String field = order.getProperty();
+
+            Comparator<DataEntity> fieldComparator = switch (field) {
+                case "age" -> Comparator.comparing(DataEntity::getAge);
+                case "createdAt" -> Comparator.comparing(DataEntity::getCreatedAt);
+                case "genderProbability" -> Comparator.comparing(DataEntity::getGenderProbability);
+                case "countryProbability" -> Comparator.comparing(DataEntity::getCountryProbability);
+                default -> Comparator.comparing(DataEntity::getCreatedAt);
+            };
+
+            if (order.isDescending()) {
+                fieldComparator = fieldComparator.reversed();
+            }
+
+            comparator = (comparator == null)
+                    ? fieldComparator
+                    : comparator.thenComparing(fieldComparator);
         }
-        return ResponseEntity.notFound().build();
+
+        if (comparator != null) {
+            filtered = filtered.stream().sorted(comparator).toList();
+        }
+
+        //PAGINATION
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), filtered.size());
+
+        List<DataEntity> paginated = (start >= filtered.size())
+                ? List.of()
+                : filtered.subList(start, end);
+
+        //RESPONSE
+        return ResponseEntity.ok(
+                new PaginatedResponse<>(
+                        "success",
+                        pageable.getPageNumber() + 1,
+                        pageable.getPageSize(),
+                        filtered.size(),
+                        paginated
+                )
+        );
     }
 
 

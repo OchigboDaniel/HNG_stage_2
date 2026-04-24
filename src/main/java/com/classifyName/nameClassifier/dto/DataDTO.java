@@ -3,11 +3,15 @@ package com.classifyName.nameClassifier.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.Instant;
+import java.util.Random;
 
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class DataDTO {
     private String name;
     private String gender;
@@ -18,4 +22,5 @@ public class DataDTO {
     private String country_id;
     private double country_probability;
     private Instant created_at;
+
 }

@@ -2,9 +2,9 @@ spring:
   application:
     name: nameClassifier
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://ep-mute-poetry-amyvhz5r-pooler.c-5.us-east-1.aws.neon.tech/neondb
+    username: neondb_owner
+    password: npg_8JgqyVvpm6wl
     driver-class-name: org.postgresql.Driver
 
   jpa:

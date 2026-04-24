@@ -37,7 +37,7 @@ public class DataEntity {
     private Instant createdAt;
 
 
-    public void setAgeGroup(int age) {
+    public void setIAgeGroup(int age) {
         if (age >= 0 && age <= 12) {
             this.ageGroup = "child";
         } else if (age >= 13 && age <= 19) {

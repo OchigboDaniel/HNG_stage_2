@@ -1,6 +1,7 @@
-package com.classifyName.nameClassifier;
+package com.classifyName.nameClassifier.repository;
 
 import com.classifyName.nameClassifier.model.DataEntity;
+import com.classifyName.nameClassifier.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,5 +28,7 @@ public interface IDataRepository extends JpaRepository<DataEntity, UUID> {
             @Param("minAge") Integer minAge,
             @Param("maxAge") Integer maxAge
     );
+
+
 
 }

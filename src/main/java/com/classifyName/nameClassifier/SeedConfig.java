@@ -1,6 +1,7 @@
 package com.classifyName.nameClassifier;
 
 import com.classifyName.nameClassifier.model.DataEntity;
+import com.classifyName.nameClassifier.repository.IDataRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

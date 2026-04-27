@@ -2,9 +2,7 @@ package com.classifyName.nameClassifier.model;
 
 import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.hibernate.annotations.UuidGenerator;
 
 
 import java.time.Instant;

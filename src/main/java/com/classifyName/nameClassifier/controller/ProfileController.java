@@ -20,25 +20,29 @@ import java.util.UUID;
 @CrossOrigin(origins = "*", allowedHeaders = "*",
         methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.OPTIONS} )
 @RestController
-@RequestMapping("/api/profiles")
+@RequestMapping(value = "/api/profiles", headers = "X-API-Version=1")
 @Validated
 public class ProfileController {
 
     @Autowired
     DataService genderService;
 
-    @PreAuthorize("hasAnyRole('ANALYST', 'ADMIN')")
+    //only admin can access endpoint
+    @PreAuthorize("hasRole('ANALYST')")
     @PostMapping
     public ResponseEntity<?> createProfile(@RequestBody RequestDTO data){
         return  genderService.createProfile(data);
     }
 
+    //
+    @PreAuthorize("hasAnyRole('ANALYST', 'ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getProfileById(@PathVariable UUID id){
         return  genderService.getProfileByID(id);
     }
 
-    @GetMapping
+    @PreAuthorize("hasAnyRole('ANALYST', 'ADMIN')")
+    @GetMapping()
     public ResponseEntity<?> getAllProfile(
             @RequestParam(required = false) String gender,
             @RequestParam(required = false) String country_id,
@@ -91,6 +95,8 @@ public class ProfileController {
         );
     }
 
+
+    @PreAuthorize("hasAnyRole('ANALYST', 'ADMIN')")
     @GetMapping("/search")
     public ResponseEntity<?> searchProfile(
             @RequestParam(name = "q") String keywords,
@@ -107,6 +113,7 @@ public class ProfileController {
         return genderService.searchProfile(keywords, pageIndex, limit);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity deleteProfileById(@PathVariable UUID id){
         return genderService.deleteById(id);

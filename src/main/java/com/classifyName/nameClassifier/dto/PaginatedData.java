@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class PaginatedResponse<T> {
+public class PaginatedData<T> {
     private String status;
     private int page;
     private int limit;

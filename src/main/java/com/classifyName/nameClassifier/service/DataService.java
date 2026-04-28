@@ -2,7 +2,7 @@ package com.classifyName.nameClassifier.service;
 
 import com.classifyName.nameClassifier.*;
 import com.classifyName.nameClassifier.controller.ExistingResponseDTO;
-import com.classifyName.nameClassifier.dto.PaginatedResponse;
+import com.classifyName.nameClassifier.dto.PaginatedData;
 import com.classifyName.nameClassifier.dto.ProfileResponseDTO;
 import com.classifyName.nameClassifier.dto.RequestDTO;
 import com.classifyName.nameClassifier.model.DataEntity;
@@ -164,7 +164,7 @@ public class DataService {
         return ResponseEntity.notFound().build();
     }
 
-    public ResponseEntity<?> getAllProfile(
+    public PaginatedData getAllProfile(
             String gender,
             String age_group,
             String country_id,
@@ -217,15 +217,16 @@ public class DataService {
                 ? List.of()
                 : filtered.subList(start, end);
 
-        return ResponseEntity.ok(
-                new PaginatedResponse<>(
+        PaginatedData paginatedData =  new PaginatedData<>(
                         "success",
                         pageable.getPageNumber() + 1,
                         size,
                         filtered.size(),
                         paginated
-                )
+
         );
+
+        return paginatedData;
     }
 
 
@@ -271,7 +272,7 @@ public class DataService {
 
         // 5. RESPONSE
         return ResponseEntity.ok(
-                new PaginatedResponse<>(
+                new PaginatedData<>(
                         "success",
                         page,
                         limit,
